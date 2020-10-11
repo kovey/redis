@@ -11,7 +11,9 @@
  */
 namespace Kovey\Redis\Redis;
 
-class Redis
+use Kovey\Redis\RedisInterface;
+
+class Redis implements RedisInterface
 {
 	/**
 	 * @description REDIS Connnection
@@ -38,7 +40,7 @@ class Redis
 	 *
 	 * @return bool
 	 */
-	public function connect()
+	public function connect() : bool
 	{
 		if (!$this->connection->connect($this->config['host'], $this->config['port'])) {
 			return false;
@@ -70,11 +72,16 @@ class Redis
 	 *
 	 * @return string
 	 */
-	public function getError()
+	public function getError() : string
 	{
         return $this->connection->getLastError();
 	}
 
+    /**
+     * @description close connection
+     *
+     * @return null
+     */
     public function __destruct()
     {
         $this->connection->close();

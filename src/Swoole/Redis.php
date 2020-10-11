@@ -7,13 +7,13 @@
  *
  * @time        Tue Sep 24 09:01:39 2019
  *
- * @class       vendor/Kovey/Components/Cache/Redis.php
- *
  * @author      kovey
  */
 namespace Kovey\Redis\Swoole;
 
-class Redis
+use Kovey\Redis\RedisInterface;
+
+class Redis implements RedisInterface
 {
 	/**
 	 * @description REDIS connection
@@ -43,7 +43,7 @@ class Redis
 	 *
 	 * @return bool
 	 */
-	public function connect()
+	public function connect() : bool
 	{
 		if (!$this->connection->connect($this->config['host'], $this->config['port'])) {
 			return false;
@@ -75,11 +75,17 @@ class Redis
 	 *
 	 * @return string
 	 */
-	public function getError()
+	public function getError() : string
 	{
 		return sprintf('[%s]: %s', $this->connection->errCode, $this->connection->errMsg);
 	}
 
+
+    /**
+     * @description close connection
+     *
+     * @return null
+     */
     public function __destruct()
     {
         $this->connection->close();
