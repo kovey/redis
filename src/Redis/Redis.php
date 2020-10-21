@@ -20,14 +20,14 @@ class Redis implements RedisInterface
 	 *
 	 * @var \Redis
 	 */
-	private $connection;
+	private \Redis $connection;
 
 	/**
 	 * @description config
 	 *
 	 * @var Array
 	 */
-	private $config;
+	private Array $config;
 
 	public function __construct(Array $config)
 	{
@@ -58,7 +58,7 @@ class Redis implements RedisInterface
 	 *
 	 * @return mixed
 	 */
-	public function __call($name, $params)
+	public function __call(string $name, Array $params)
 	{
         if (!$this->connection->isConnected()) {
             $this->connect();

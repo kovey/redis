@@ -1,14 +1,14 @@
 {
     "name": "kovey/redis",
-    "type": "project",
-    "description": "The Kovey Framework Redis",
+    "type": "library",
+    "description": "Redis Of The Kovey Framework",
     "keywords": [
         "framework",
         "kovey",
         "redis",
         "php"
     ],
-    "license": "Apache",
+    "license": "Apache-2.0",
     "authors": [
         {
             "name": "Kovey",
@@ -17,8 +17,8 @@
         }
     ],
     "require": {
-        "php": "^7.3",
-        "ext-redis": "^5.3"
+        "php": ">=8.0",
+        "ext-redis": ">=5.3"
     },
     "require-dev": {
         "phpunit/phpunit": "^9.3"
