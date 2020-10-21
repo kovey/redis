@@ -31,6 +31,12 @@ class Redis implements RedisInterface
 
 	public function __construct(Array $config)
 	{
+        foreach (array('host', 'port', 'db') as $field) {
+            if (!isset($config[$field])) {
+                throw new \RuntimeException("$field is not exists");
+            }
+        }
+
 		$this->config = $config;
 		$this->connection = new \Redis();
 	}
@@ -39,10 +45,12 @@ class Redis implements RedisInterface
 	 * @description connenct to server
 	 *
 	 * @return bool
+     *
+     * @throws RedisException
 	 */
 	public function connect() : bool
 	{
-		if (!$this->connection->connect($this->config['host'], $this->config['port'])) {
+		if (!$this->connection->connect($this->config['host'], $this->config['port'], 1)) {
 			return false;
 		}
 
