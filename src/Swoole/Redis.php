@@ -15,76 +15,76 @@ use Kovey\Redis\RedisInterface;
 
 class Redis implements RedisInterface
 {
-	/**
-	 * @description REDIS connection
-	 *
-	 * @var \Swoole\Coroutine\Redis
-	 */
-	private \Swoole\Coroutine\Redis $connection;
+    /**
+     * @description REDIS connection
+     *
+     * @var \Swoole\Coroutine\Redis
+     */
+    private \Swoole\Coroutine\Redis $connection;
 
-	/**
-	 * @description config
-	 *
-	 * @var Array
-	 */
-	private Array $config;
+    /**
+     * @description config
+     *
+     * @var Array
+     */
+    private Array $config;
 
-	public function __construct(Array $config)
-	{
+    public function __construct(Array $config)
+    {
         foreach (array('host', 'port', 'db') as $field) {
             if (!isset($config[$field])) {
                 throw new \RuntimeException("$field is not exists");
             }
         }
 
-		$this->config = $config;
-		$this->connection = new \Swoole\Coroutine\Redis();
-		$this->connection->setOptions(array(
-			'compatibility_mode' => true
-		));
-	}
+        $this->config = $config;
+        $this->connection = new \Swoole\Coroutine\Redis();
+        $this->connection->setOptions(array(
+            'compatibility_mode' => true
+        ));
+    }
 
-	/**
-	 * @description connect to server
-	 *
-	 * @return bool
-	 */
-	public function connect() : bool
-	{
-		if (!$this->connection->connect($this->config['host'], $this->config['port'])) {
-			return false;
-		}
+    /**
+     * @description connect to server
+     *
+     * @return bool
+     */
+    public function connect() : bool
+    {
+        if (!$this->connection->connect($this->config['host'], $this->config['port'])) {
+            return false;
+        }
 
-		return $this->connection->select($this->config['db']);
-	}
+        return $this->connection->select($this->config['db']);
+    }
 
-	/**
-	 * @description run command
-	 *
-	 * @param string $name
-	 *
-	 * @param Array $params
-	 *
-	 * @return mixed
-	 */
-	public function __call(string $name, Array $params)
-	{
-		if (!$this->connection->connected) {
-			$this->connect();
-		}
+    /**
+     * @description run command
+     *
+     * @param string $name
+     *
+     * @param Array $params
+     *
+     * @return mixed
+     */
+    public function __call(string $name, Array $params)
+    {
+        if (!$this->connection->connected) {
+            $this->connect();
+        }
 
-		return $this->connection->$name(...$params);
-	}
+        return $this->connection->$name(...$params);
+    }
 
-	/**
-	 * @description get error
-	 *
-	 * @return string
-	 */
-	public function getError() : string
-	{
-		return sprintf('[%s]: %s', $this->connection->errCode, $this->connection->errMsg);
-	}
+    /**
+     * @description get error
+     *
+     * @return string
+     */
+    public function getError() : string
+    {
+        return sprintf('[%s]: %s', $this->connection->errCode, $this->connection->errMsg);
+    }
 
 
     /**
