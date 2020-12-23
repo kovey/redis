@@ -50,7 +50,19 @@ class Redis implements RedisInterface
      */
     public function connect() : bool
     {
-        if (!$this->connection->connect($this->config['host'], $this->config['port'], 1)) {
+        try {
+            if (!empty($this->config['username']) && !empty($this->config['password'])) {
+                if (!$this->connection->connect($this->config['host'], $this->config['port'], 1, null, 0, 0, array(
+                    'auth' => array($this->config['username'], $this->config['password'])
+                ))) {
+                    return false;
+                }
+            } else {
+                if (!$this->connection->connect($this->config['host'], $this->config['port'], 1)) {
+                    return false;
+                }
+            }
+        } catch (\RedisException $e) {
             return false;
         }
 
@@ -74,11 +86,9 @@ class Redis implements RedisInterface
 
         try {
             return $this->connection->$name(...$params);
-        } catch (\Exception $e) {
-            if ($e->getMessage() === 'Connection lost') {
-                $this->connect();
-                return $this->connection->$name(...$params);
-            }
+        } catch (\RedisException $e) {
+            $this->connect();
+            return $this->connection->$name(...$params);
         }
     }
 
