@@ -67,7 +67,7 @@ class Redis implements RedisInterface
      *
      * @return mixed
      */
-    public function __call(string $name, Array $params)
+    public function __call(string $name, Array $params) : mixed
     {
         if (!$this->connection->connected) {
             $this->connect();
