@@ -12,6 +12,7 @@
 namespace Kovey\Redis\Swoole;
 
 use Kovey\Redis\RedisInterface;
+use Kovey\Logger\Redis as RedisLogger;
 
 class Redis implements RedisInterface
 {
@@ -29,6 +30,13 @@ class Redis implements RedisInterface
      */
     private Array $config;
 
+    /**
+     * @description is dev
+     *
+     * @var bool
+     */
+    private bool $isDev;
+
     public function __construct(Array $config)
     {
         foreach (array('host', 'port', 'db') as $field) {
@@ -38,6 +46,7 @@ class Redis implements RedisInterface
         }
 
         $this->config = $config;
+        $this->isDev = ($config['dev'] ?? 'Off') === 'On';
         $this->connection = new \Swoole\Coroutine\Redis();
         $this->connection->setOptions(array(
             'compatibility_mode' => true
@@ -69,11 +78,24 @@ class Redis implements RedisInterface
      */
     public function __call(string $name, Array $params) : mixed
     {
-        if (!$this->connection->connected) {
-            $this->connect();
+        $begin = 0;
+        if ($this->isDev) {
+            $begin = microtime(true);
         }
 
-        return $this->connection->$name(...$params);
+        try {
+            if (!$this->connection->connected) {
+                $this->connect();
+            }
+
+            $result = $this->connection->$name(...$params);
+        } finally {
+            if ($this->isDev) {
+                RedisLogger::write($name, $params, $result ?? null, microtime(true) - $begin, $this->traceId ?? '', $this->spanId ?? '');
+            }
+        }
+
+        return $result;
     }
 
     /**
