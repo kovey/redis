@@ -61,13 +61,12 @@ class RedisTest extends TestCase
 
     public function testRedisConnectFailure()
     {
-        $this->expectException(\RedisException::class);
         $redis = new Redis(array(
             'host' => '127.0.0.2',
             'port' => 6379,
             'db' => 0
         ));
 
-        $redis->connect();
+        $this->assertFalse($redis->connect());
     }
 }
