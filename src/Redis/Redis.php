@@ -13,8 +13,9 @@ namespace Kovey\Redis\Redis;
 
 use Kovey\Redis\RedisInterface;
 use Kovey\Logger\Redis as RedisLogger;
+use Kovey\Library\Trace\TraceInterface;
 
-class Redis implements RedisInterface
+class Redis implements RedisInterface, TraceInterface
 {
     /**
      * @description REDIS Connection
@@ -36,6 +37,10 @@ class Redis implements RedisInterface
      * @var bool
      */
     private bool $isDev;
+
+    private string $traceId;
+
+    private string $spanId;
 
     public function __construct(Array $config)
     {
@@ -131,5 +136,25 @@ class Redis implements RedisInterface
     public function __destruct()
     {
         $this->connection->close();
+    }
+
+    public function setTraceId(string $traceId) : void
+    {
+        $this->traceId = $traceId;
+    }
+
+    public function setSpanId(string $spanId) : void
+    {
+        $this->spanId = $spanId;
+    }
+
+    public function getTraceId() : string
+    {
+        return $this->traceId;
+    }
+
+    public function getSpanId() : string
+    {
+        return $this->spanId;
     }
 }
