@@ -138,21 +138,41 @@ class Redis implements RedisInterface, TraceInterface
         $this->connection->close();
     }
 
+    /**
+     * @description set traceId
+     *
+     * @return void
+     */
     public function setTraceId(string $traceId) : void
     {
         $this->traceId = $traceId;
     }
 
+    /**
+     * @description set spanId
+     *
+     * @return void
+     */
     public function setSpanId(string $spanId) : void
     {
         $this->spanId = $spanId;
     }
 
+    /**
+     * @description get traceId
+     *
+     * @return string
+     */
     public function getTraceId() : string
     {
         return $this->traceId;
     }
 
+    /**
+     * @description get span id 
+     *
+     * @return string
+     */
     public function getSpanId() : string
     {
         return $this->spanId;
