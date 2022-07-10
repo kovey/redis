@@ -65,10 +65,18 @@ class Redis implements RedisInterface, TraceInterface
      */
     public function connect() : bool
     {
+        $auth = array();
+        if (!empty($this->config['username'])) {
+            $auth[] = $this->config['username'];
+        }
+        if (!empty($this->config['password'])) {
+            $auth[] = $this->config['password'];
+        }
+
         try {
-            if (!empty($this->config['username']) && !empty($this->config['password'])) {
+            if (!empty($auth)) {
                 if (!$this->connection->connect($this->config['host'], $this->config['port'], 1, null, 0, 0, array(
-                    'auth' => array($this->config['username'], $this->config['password'])
+                    'auth' => $auth
                 ))) {
                     return false;
                 }
